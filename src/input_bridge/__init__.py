@@ -1,4 +1,6 @@
 import abc
+import logging
+import time
 
 
 __all__ = [
@@ -23,9 +25,10 @@ class Handler(abc.ABC):
 
 
 class Manager:
-    def __init__(self, bridges=None, handlers=None):
+    def __init__(self, bridges=None, handlers=None, rate=None):
         self.bridges = bridges or []
         self.handlers = handlers or []
+        self.rate = rate
 
     def add_bridge(self, bridge):
         self.bridges.append(bridge)
@@ -46,6 +49,14 @@ class Manager:
     def run(self):
         try:
             while True:
+                start_time = time.perf_counter()
                 self.update()
+                end_time = time.perf_counter()
+                if self.rate is not None:
+                    sleep_time = self.rate - (end_time - start_time)
+                    if sleep_time > 0:
+                        logging.debug(f'sleeping for {sleep_time}')
+                        time.sleep(sleep_time)
+
         except KeyboardInterrupt:
             pass
