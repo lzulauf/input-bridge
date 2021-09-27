@@ -29,12 +29,14 @@ class MidiBridge(Bridge):
             yield pygame.midi.get_device_info(i)
 
     def get_midi_device_index(self, name, requires_input=False, requires_output=False):
+        logging.debug(f'MIDI devices found: {list(self.list_midi_devices())}')
         for i, device_info in enumerate(self.list_midi_devices()):
             if device_info[1] == bytes(name, 'utf8'):
                 if requires_input and not device_info[2]:
                     continue
                 if requires_output and not device_info[3]:
                     continue
+                logging.info(f'Using device: {device_info}')
                 return i
 
     def begin_update(self):
