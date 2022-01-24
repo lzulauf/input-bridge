@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 input-bridge = {editable = true, path = "."}
-osascript = "*"
 
 [dev-packages]
 pytest = "*"
