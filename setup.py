@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 setup(
-    name='input_bridge',
+    name='input-bridge',
     version='0.1.0',
     url='',
     author='Luke Zulauf',
@@ -12,7 +12,7 @@ setup(
     package_dir={'': 'src'},
     entry_points={
         'console_scripts': [
-            'input_bridge=input_bridge.scripts.input_bridge:main',
+            'input-bridge=input_bridge.scripts.input_bridge:main',
         ]
     },
     install_requires=[
@@ -20,5 +20,6 @@ setup(
         'osascript',
         'pygame',
         'ruamel.yaml',
+        'runcmd',  # required by osascript
     ]
 )

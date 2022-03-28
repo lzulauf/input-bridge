@@ -79,7 +79,7 @@ def _load_handler(handler_config, bridges):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(parents=[log_level_parser()])
-    parser.add_argument('config', metavar='YAML', help='Configuration yaml')
+    parser.add_argument('--config', metavar='YAML', default='config.yml', help='Configuration yaml')
     parser.add_argument(
         '--rate', type=float, default=0.2, help='Update rate in seconds [%(default)s]')
     args = parser.parse_args(argv)
