@@ -4,13 +4,13 @@ from input_bridge.bridges.keyboard import KeyboardBridge
 
 
 class MidiKeyboardHandler(Handler):
-    def __init__(self, midi_bridge, keyboard_bridge, channel, encoder_num, *keys):
+    def __init__(self, midi_bridge, keyboard_bridge, channel, encoder, keys):
         assert isinstance(midi_bridge, MidiBridge)
         assert isinstance(keyboard_bridge, KeyboardBridge)
         self.midi_bridge = midi_bridge
         self.keyboard_bridge = keyboard_bridge
         self.channel = channel
-        self.encoder_num = encoder_num
+        self.encoder_num = encoder
         self.keys = keys
 
     def update(self):
@@ -65,17 +65,19 @@ class MidiAbletonHandler(Handler):
             return False
 
         encoder_num, value = midi_data.data1, midi_data.data2
-        if encoder_num == self.encoder_num:
-            keys = []
-            if value < 64 and self.increment_keys:
-                # increment
-                for i in range(value):
-                    keys.extend(self.increment_keys)
+        if encoder_num != self.encoder_num:
+            return False
 
-            elif value > 64 and self.decrement_keys:
-                # decrement
-                for i in range(value - 64):
-                    keys.extend(self.decrement_keys)
+        keys = []
+        if value < 64 and self.increment_keys:
+            # increment
+            for i in range(value):
+                keys.extend(self.increment_keys)
+
+        elif value > 64 and self.decrement_keys:
+            # decrement
+            for i in range(value - 64):
+                keys.extend(self.decrement_keys)
 
         self.keyboard_bridge.send_keys(*keys)
 

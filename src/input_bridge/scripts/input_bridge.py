@@ -1,6 +1,7 @@
 import argparse
 import importlib
 import logging
+import sys
 
 from ruamel.yaml import YAML
 
@@ -69,12 +70,12 @@ def _import(object_path):
 
 
 def _load_handler(handler_config, bridges):
-    args = [
+    bridge_args = [
         bridges[bridge_name]
         for bridge_name in handler_config.get('bridge_args', [])
     ]
-    args += handler_config.get('args', [])
-    return _import(handler_config['type'])(*args)
+    args = handler_config.get('args', {})
+    return _import(handler_config['type'])(*bridge_args, **args)
 
 
 def main(argv=None):
@@ -82,7 +83,22 @@ def main(argv=None):
     parser.add_argument('--config', metavar='YAML', default='config.yml', help='Configuration yaml')
     parser.add_argument(
         '--rate', type=float, default=0.2, help='Update rate in seconds [%(default)s]')
+    parser.add_argument(
+        '--list-midi-devices', default=False, action='store_true', help='List midi device info and exit')
     args = parser.parse_args(argv)
+
+    if args.list_midi_devices:
+        import pygame.midi
+        try:
+            from input_bridge.bridges.midi import MidiBridge
+        except ImportError:
+            print("MidiBridge not installed.")
+        pygame.midi.init()
+        for device in MidiBridge.list_midi_devices():
+            print(repr(device))
+        sys.exit(0)
+
+
 
     with open(args.config) as handle:
         config = YAML(typ='safe').load(handle)
@@ -90,7 +106,7 @@ def main(argv=None):
     logging.debug(f'{config=}')
 
     bridges = {
-        bridge_name: _import(bridge_config['type'])(*bridge_config.get('args', []))
+        bridge_name: _import(bridge_config['type'])(**bridge_config.get('args', {}))
         for bridge_name, bridge_config in config.get('bridges', {}).items()
     }
 

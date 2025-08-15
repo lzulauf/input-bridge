@@ -1,0 +1,52 @@
+bridges:
+  midi_bridge:
+    type: input_bridge.bridges.midi:MidiBridge
+    args:
+      - 'Kenton Killamix Mini MIDI 1'
+  keyboard_bridge:
+    type: input_bridge.bridges.keyboard:KeyboardBridge
+  mac_osa_bridge:
+    type: input_bridge.bridges.mac_osa:MacOSABridge
+
+handlers:
+  - type: input_bridge.handlers.midi_to_mac_osa:MidiMacVolumeHandler
+    bridge_args:
+      - midi_bridge
+      - mac_osa_bridge
+    args:
+      channel: 176
+      encoder: 1
+  - type: input_bridge.handlers.midi_to_mac_osa:MidiMacMuteHandler
+    bridge_args:
+      - midi_bridge
+      - mac_osa_bridge
+    args:
+      channel: 176
+      encoder: 10
+  - type: input_bridge.handlers.midi_to_keyboard:MidiKeyboardHandler
+    bridge_args:
+      - midi_bridge
+      - keyboard_bridge
+    args:
+      channel: 176
+      encoder: 11
+      keys:
+        - 'command+shift+a'
+  - type: input_bridge.handlers.midi_to_keyboard:MidiKeyboardHandler
+    bridge_args:
+      - midi_bridge
+      - keyboard_bridge
+    args:
+      channel: 176
+      encoder: 12
+      keys:
+        - 'command+shift+v'
+  - type: input_bridge.handlers.midi_to_keyboard:MidiKeyboardHandler
+    bridge_args:
+      - midi_bridge
+      - keyboard_bridge
+    args:
+      channel: 176
+      encoder: 13
+      keys:
+        - [0x3a, 'y']

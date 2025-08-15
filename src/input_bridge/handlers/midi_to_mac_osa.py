@@ -6,13 +6,13 @@ from input_bridge.bridges.mac_osa import MacOSABridge
 
 
 class MidiMacVolumeHandler(Handler):
-    def __init__(self, midi_bridge, mac_osa_bridge, channel, encoder_num):
+    def __init__(self, midi_bridge, mac_osa_bridge, channel, encoder):
         assert isinstance(midi_bridge, MidiBridge)
         assert isinstance(mac_osa_bridge, MacOSABridge)
         self.midi_bridge = midi_bridge
         self.mac_osa_bridge = mac_osa_bridge
         self.channel = channel
-        self.encoder_num = encoder_num
+        self.encoder_num = encoder
 
     def update(self):
         volume = None
@@ -36,13 +36,13 @@ class MidiMacVolumeHandler(Handler):
 
 
 class MidiMacMuteHandler(Handler):
-    def __init__(self, midi_bridge, mac_osa_bridge, channel, encoder_num):
+    def __init__(self, midi_bridge, mac_osa_bridge, channel, encoder):
         assert isinstance(midi_bridge, MidiBridge)
         assert isinstance(mac_osa_bridge, MacOSABridge)
         self.midi_bridge = midi_bridge
         self.mac_osa_bridge = mac_osa_bridge
         self.channel = channel
-        self.encoder_num = encoder_num
+        self.encoder_num = encoder
         self.last_volume = self.mac_osa_bridge.get_current_volume()
 
     def update(self):

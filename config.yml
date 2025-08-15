@@ -1,0 +1,68 @@
+bridges:
+  midi_bridge:
+    type: input_bridge.bridges.midi:MidiBridge
+    args:
+      device_name: 'Kenton Killamix Mini MIDI 1'
+  alsa_bridge:
+    type: input_bridge.bridges.alsa:AlsaBridge
+
+handlers:
+  # Master Volume - Encoder 1
+  - type: input_bridge.handlers.midi_to_alsa:MidiAlsaVolumeHandler
+    bridge_args:
+      - midi_bridge
+      - alsa_bridge
+    args:
+      channel: 176
+      encoder: 1
+  - type: input_bridge.handlers.midi_to_alsa:MidiAlsaMuteHandler
+    bridge_args:
+      - midi_bridge
+      - alsa_bridge
+    args:
+      channel: 176
+      encoder: 10  # Encoder 1 led toggle
+  # Microphone - Encoder 2
+  - type: input_bridge.handlers.midi_to_alsa:MidiAlsaVolumeHandler
+    bridge_args:
+      - midi_bridge
+      - alsa_bridge
+    args:
+      channel: 176
+      encoder: 2
+      is_microphone: true
+  - type: input_bridge.handlers.midi_to_alsa:MidiAlsaMuteHandler
+    bridge_args:
+      - midi_bridge
+      - alsa_bridge
+    args:
+      channel: 176
+      encoder: 11  # Encoder 2 led toggle
+      is_microphone: true
+  # - type: input_bridge.handlers.midi_to_keyboard:MidiKeyboardHandler
+  #   bridge_args:
+  #     - midi_bridge
+  #     - keyboard_bridge
+  #   args:
+  #     channel: 176
+  #     encoder 11
+  #     keys:
+  #       - 'command+shift+a'
+  # - type: input_bridge.handlers.midi_to_keyboard:MidiKeyboardHandler
+  #   bridge_args:
+  #     - midi_bridge
+  #     - keyboard_bridge
+  #   args:
+  #     channel: 176
+  #     encoder: 12
+  #     keys:
+  #       - 'command+shift+v'
+  # - type: input_bridge.handlers.midi_to_keyboard:MidiKeyboardHandler
+  #   bridge_args:
+  #     - midi_bridge
+  #     - keyboard_bridge
+  #   args:
+  #     channel: 176
+  #     encoder: 13
+  #     keys:
+  #       - [0x3a, 'y']
