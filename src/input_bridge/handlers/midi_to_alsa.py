@@ -1,6 +1,10 @@
+import time
+
 from input_bridge import Handler
 from input_bridge.bridges.midi import MidiBridge, MidiData
 from input_bridge.bridges.alsa import AlsaBridge
+
+DEVICE_SYNCHRONIZATION_THRESHOLD = 0.4
 
 
 class MidiAlsaVolumeHandler(Handler):
@@ -12,7 +16,11 @@ class MidiAlsaVolumeHandler(Handler):
         self.channel = channel
         self.encoder_num = encoder
         self.is_microphone = is_microphone
+        self.last_device_synchronization = time.time()
 
+        self.synchronize_midi_device()
+
+    def synchronize_midi_device(self):
         if self.is_microphone:
             volume = self.alsa_bridge.get_microphone_volume()
             self.midi_bridge.send_midi_message(
@@ -23,6 +31,7 @@ class MidiAlsaVolumeHandler(Handler):
             self.midi_bridge.send_midi_message(
                 MidiData(channel=self.channel, data1=self.encoder_num, data2=volume)
             )
+        self.last_device_synchronization = time.time()
 
     def update(self):
         datas_to_keep = []
@@ -31,6 +40,9 @@ class MidiAlsaVolumeHandler(Handler):
             if result is False:
                 datas_to_keep.append(midi_data)
         self.midi_bridge.midi_datas[:] = datas_to_keep
+
+        if time.time() - self.last_device_synchronization > DEVICE_SYNCHRONIZATION_THRESHOLD:
+            self.synchronize_midi_device()
 
     def handle(self, midi_data):
         if midi_data.channel != self.channel:
